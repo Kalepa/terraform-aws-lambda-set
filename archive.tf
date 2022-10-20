@@ -1,7 +1,7 @@
 // If the archive_output_name variable is provided, it must end in ".zip"
 module "assert_proper_output_archive_name" {
-  source        = "Invicton-Labs/assertion/null"
-  version       = "0.2.1"
+  source        = "Kalepa/assertion/null"
+  version       = "~> 0.2"
   count         = var.archive_output_name != null ? 1 : 0
   condition     = length(var.archive_output_name) > 4 && lower(substr(var.archive_output_name, length(var.archive_output_name) - 4, 4)) == ".zip" && length(regexall("[/\\\\]+", var.archive_output_name)) == 0
   error_message = "The `archive_output_name` variable, if provided, must end in `.zip` and may not contain `\\` or `/`."
