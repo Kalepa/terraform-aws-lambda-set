@@ -80,3 +80,11 @@ resource "aws_lambda_permission" "allow_execution" {
   principal     = var.execution_services[count.index].service
   source_arn    = var.execution_services[count.index].arn
 }
+
+resource "aws_lambda_function_event_invoke_config" "function_event_invoke_config" {
+  count                        = var.retries != null ? 1 : 0
+  depends_on                   = [aws_lambda_function.function]
+  function_name                = aws_lambda_function.function.function_name
+  maximum_event_age_in_seconds = var.retries.max_event_age_in_seconds
+  maximum_retry_attempts       = var.retries.attempts
+}
