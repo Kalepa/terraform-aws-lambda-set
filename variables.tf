@@ -153,3 +153,12 @@ variable "logs_non_lambda_subscriptions" {
   }))
   default = []
 }
+
+variable "retries" {
+  description = "A configuration for lambda asynchronous invocation retries."
+  type = object({
+    attempts                 = number
+    max_event_age_in_seconds = number
+  })
+  default = null
+}
