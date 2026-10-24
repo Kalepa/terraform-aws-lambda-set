@@ -35,16 +35,11 @@ resource "aws_iam_role" "lambda_role" {
   assume_role_policy    = data.aws_iam_policy_document.assume_role_policy.json
 }
 
-// Split up the Lambda role's ARN
-data "aws_arn" "lambda_role" {
-  arn = var.lambda_config.role != null ? var.lambda_config.role : aws_iam_role.lambda_role[0].arn
-}
-
+// Plain locals: a deferred data read would make `role` unknown and replace (delete) the fixed-name policies below
 locals {
-  role_name_parts = split("/", data.aws_arn.lambda_role.resource)
-  // The role name includes "/role/..." and we don't want the "role" part
-  role_id  = local.role_name_parts[length(local.role_name_parts) - 1]
-  role_arn = data.aws_arn.lambda_role.arn
+  role_arn = var.lambda_config.role != null ? var.lambda_config.role : aws_iam_role.lambda_role[0].arn
+  // The role name is the last segment of the ARN, after "role/" and any path
+  role_id = reverse(split("/", local.role_arn))[0]
 }
 
 // Attach a policy that allows it to write logs
